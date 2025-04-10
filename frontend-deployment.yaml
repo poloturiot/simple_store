@@ -19,5 +19,6 @@ spec:
       containers:
       - name: frontend
         image: ghcr.io/poloturiot/simple_store/app:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80 
