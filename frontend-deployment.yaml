@@ -21,4 +21,11 @@ spec:
         image: ghcr.io/poloturiot/simple_store/app:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 80 
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m" # 50 millicores (0.05 CPU)
+          limits:
+            memory: "128Mi"
+            cpu: "100m" # 100 millicores (0.1 CPU)
