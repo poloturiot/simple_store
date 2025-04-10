@@ -14,8 +14,10 @@ spec:
       labels:
         app: webstore-frontend
     spec:
+      imagePullSecrets:
+      - name: ghcr-creds
       containers:
       - name: frontend
-        image: your-dockerhub-username/webstore-frontend:latest # Replace with your image name
+        image: ghcr.io/poloturiot/simple_store/app:latest
         ports:
         - containerPort: 80 

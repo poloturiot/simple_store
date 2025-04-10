@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ghcr-creds
+  # namespace: <your-namespace> # Uncomment and set if not using the 'default' namespace
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJnaGNyLmlvIjp7InVzZXJuYW1lIjoicG9sb3R1cmlvdCIsInBhc3N3b3JkIjoiZ2hwX215a1lGYWVFNzNvNEtFY2pnb3h2TUFlb05jajl1VTNZQkhYSyIsImF1dGgiOiJjRzlzYjNSMWNtbHZkRHBuYUhCZmJYbHJXVVpoWlVVM00yODBTMFZqYW1kdmVIWk5RV1Z2VG1OcU9YVlZNMWxDU0ZoTCJ9fX0=
