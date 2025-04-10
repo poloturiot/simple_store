@@ -35,8 +35,8 @@ push: build
 	docker push $(GHCR_IMAGE_PATH)
 
 # Clean up local images (optional)
-.PHONY: clean
-clean:
+.PHONY: remove-local-images
+remove-local-images:
 	@echo "Removing local Docker images..."
 	docker rmi $(LOCAL_IMAGE_PATH) || true
 	docker rmi $(GHCR_IMAGE_PATH) || true
@@ -48,6 +48,8 @@ apply-k8s:
 	kubectl apply -f $(K8S_DIR)
 	@echo "Forcing rollout restart for deployment $(K8S_DEPLOYMENT_NAME)..."
 	kubectl rollout restart deployment $(K8S_DEPLOYMENT_NAME)
+
+build-push-deploy: build push apply-k8s
 
 # Install Kubernetes Gateway API CRDs
 .PHONY: install-gateway-api-crds
@@ -62,5 +64,22 @@ install-kong: install-gateway-api-crds
 	helm repo add kong https://charts.konghq.com
 	@echo "Updating Helm repositories..."
 	helm repo update
-	@echo "Installing Kong Ingress Controller into namespace '$(KONG_NAMESPACE)'..."
-	helm install $(KONG_RELEASE_NAME) kong/kong --namespace $(KONG_NAMESPACE) --create-namespace --generate-name
+	@echo "Installing Kong Ingress Controller into namespace 'kong'..."
+	helm install kong kong/ingress -n kong --create-namespace
+
+.PHONY: get-proxy-ip
+get-proxy-ip:
+	@echo "Getting proxy IP..."
+	minikube service kong-gateway-proxy --url -n kong
+
+# Clean up all Kubernetes resources
+.PHONY: clean-k8s
+clean-k8s:
+	@echo "Cleaning up Kubernetes resources..."
+	kubectl delete -f $(K8S_DIR) || true
+	@echo "Uninstalling Kong..."
+	helm uninstall kong -n kong || true
+	@echo "Removing Kong namespace..."
+	kubectl delete namespace kong || true
+	@echo "Removing Gateway API CRDs..."
+	kubectl delete -f $(GATEWAY_API_CRD_URL) || true
