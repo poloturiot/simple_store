@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: webstore-frontend # Selects pods managed by the Deployment
+  ports:
+    - protocol: TCP
+      port: 80 # Port accessible inside the cluster
+      targetPort: 80 # Port the container is listening on
+  type: LoadBalancer # Expose externally (adjust if using Minikube/different setup) 

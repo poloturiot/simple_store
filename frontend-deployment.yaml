@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: webstore-frontend
+spec:
+  replicas: 1 # Start with one instance
+  selector:
+    matchLabels:
+      app: webstore-frontend
+  template:
+    metadata:
+      labels:
+        app: webstore-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-dockerhub-username/webstore-frontend:latest # Replace with your image name
+        ports:
+        - containerPort: 80 
