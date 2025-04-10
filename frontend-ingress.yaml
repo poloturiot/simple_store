@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  annotations:
+    # Specify Kong as the Ingress controller (check your Kong installation for the correct class name)
+    kubernetes.io/ingress.class: kong
+    # Optional: Add Kong-specific configurations here using annotations
+    # e.g., konghq.com/strip-path: "true"
+spec:
+  rules:
+  # - host: your-store-domain.com # Optional: Route based on hostname
+  #   http:
+  #     paths:
+  - path: / # Route traffic for the root path
+    pathType: Prefix # Or ImplementationSpecific / Exact
+    backend:
+      service:
+        name: frontend-service # The name of your frontend Kubernetes Service
+        port:
+          number: 80 # The port your frontend Service listens on 

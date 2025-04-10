@@ -7,6 +7,7 @@ GHCR_IMAGE_PATH := ghcr.io/$(GHCR_USER)/$(REPO_NAME)/$(IMAGE_NAME):$(IMAGE_TAG)
 LOCAL_IMAGE_PATH := $(IMAGE_NAME):$(IMAGE_TAG)
 K8S_DIR := . # Directory containing Kubernetes YAML files, assumes current directory
 K8S_DEPLOYMENT_NAME := frontend-deployment # Name of your deployment resource
+GATEWAY_API_CRD_URL := https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
 
 # Default target (optional, often set to build)
 .PHONY: all
@@ -47,3 +48,19 @@ apply-k8s:
 	kubectl apply -f $(K8S_DIR)
 	@echo "Forcing rollout restart for deployment $(K8S_DEPLOYMENT_NAME)..."
 	kubectl rollout restart deployment $(K8S_DEPLOYMENT_NAME)
+
+# Install Kubernetes Gateway API CRDs
+.PHONY: install-gateway-api-crds
+install-gateway-api-crds:
+	@echo "Installing Kubernetes Gateway API CRDs..."
+	kubectl apply -f $(GATEWAY_API_CRD_URL)
+
+# Install Kong Ingress Controller using Helm (depends on Gateway API CRDs)
+.PHONY: install-kong
+install-kong: install-gateway-api-crds
+	@echo "Adding Kong Helm repository..."
+	helm repo add kong https://charts.konghq.com
+	@echo "Updating Helm repositories..."
+	helm repo update
+	@echo "Installing Kong Ingress Controller into namespace '$(KONG_NAMESPACE)'..."
+	helm install $(KONG_RELEASE_NAME) kong/kong --namespace $(KONG_NAMESPACE) --create-namespace --generate-name

@@ -67,3 +67,22 @@ A basic static web store frontend served via Nginx, containerized with Docker, a
     ```bash
     make clean
     ``` 
+
+## Kong API Gateway
+
+Kong is used as the API Gateway for this project. For more information, visit the [Kong Kubernetes Ingress Controller documentation](https://github.com/Kong/kubernetes-ingress-controller).
+
+### Installation
+
+1. Install the Gateway API CRDs:
+   ```bash
+   kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+   ```
+2. Install Kong using Helm:
+   ```bash
+   helm install kong \
+     --namespace kong \
+     --create-namespace \
+     --repo https://charts.konghq.com \
+     kong
+   ```
